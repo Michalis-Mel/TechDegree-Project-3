@@ -27,7 +27,7 @@ jobTitle.addEventListener("change", function (e) {
 // Get the select element with ID "design"
 const selectDesign = document.getElementById("design");
 // Add text to the select dropdown menu
-selectDesign.firstElementChild.textContent = "Please Select a Theme";
+selectDesign.firstElementChild.textContent = "*Please Select a Theme";
 // Get the select element with the ID "color"and  the parent div with the ID "shirt-colors" to target the label element
 // Hide the label and the select elements
 const selectColor = document.getElementById("color");
@@ -165,15 +165,19 @@ name.previousElementSibling.append(nameError);
 const nameValidator = () => {
   const nameValue = name.value;
 
-  if (nameValue.length > 0) {
+  if (/^[A-Za-z\s]+$/.test(nameValue) === true && nameValue.length > 0) {
     name.style.borderColor = "white";
     nameError.style.display = "none";
     return true;
-  } else {
+  } else if(nameValue.length === 0){
     name.style.borderColor = "red";
-    nameError.innerText = `   Please enter your name!`;
+    nameError.innerText = `   *Name is required!`;
     nameError.style.display = "";
     return false;
+  }else if(/^[A-Za-z\s]+$/.test(nameValue) === false && nameValue.length > 0){
+    nameError.innerText = '*Please enter a valid name!';
+    name.style.borderColor = 'red';
+    nameError.style.display = "";
   }
 };
 
@@ -192,7 +196,7 @@ const emailValidator = () => {
     return true;
   } else {
     email.style.borderColor = "red";
-    emailError.innerText = `   Please enter your email!`;
+    emailError.innerText = `   *Please enter your email!`;
     emailError.style.display = "";
     return false;
   }
@@ -206,7 +210,7 @@ const activityValidator = () => {
   const isChecked = document.querySelectorAll("[type=checkbox]:checked");
   if (isChecked.length === 0) {
     activity.style.borderColor = "red";
-    activityError.innerText = `   Please select at least one activity!`;
+    activityError.innerText = `   *Please select at least one activity!`;
     activityError.style.display = "";
     return false;
   } else {
@@ -243,10 +247,17 @@ const paymentValidator = () => {
     ccNum.style.borderColor = "white";
     ccError.style.display = "none";
   } else {
-    ccNum.style.borderColor = "red";
-    ccError.innerText = `   Please enter a valid credit card number!`;
-    ccError.style.display = "";
-    ccBool = false;
+    if(ccNum.value.length === 0){
+      ccNum.style.borderColor = "red";
+      ccError.innerText = `   *Please enter a credit card number!`;
+      ccError.style.display = "";
+      ccBool = false;
+    }else if(ccNum.value.length <13 || ccNum.value.length > 16){
+      ccNum.style.borderColor = "red";
+      ccError.innerText = `   *Please enter a 13-16 digit credit card number!`;
+      ccError.style.display = "";
+      ccBool = false;
+    }
   }
   //regular expression for Zip number
   regex = /^\d{5}$/;
@@ -257,10 +268,17 @@ const paymentValidator = () => {
     zipNum.style.borderColor = "white";
     zipError.style.display = "none";
   } else {
-    zipNum.style.borderColor = "red";
-    zipError.innerText = `   Please enter a valid Zip!`;
-    zipError.style.display = "";
-    zipBool = false;
+    if(zipNum.value.length === 0){
+      zipNum.style.borderColor = "red";
+      zipError.innerText = `   *Please enter a Zip!`;
+      zipError.style.display = "";
+      zipBool = false;
+    }else if(zipNum.value.length > 5 || zipNum.value.length < 5){
+      zipNum.style.borderColor = "red";
+      zipError.innerText = `   *Please enter a 5 digit Zip!`;
+      zipError.style.display = "";
+      zipBool = false;
+    }
   }
   //regular expression for CVV number
   regex = /^\d{3}$/;
@@ -271,10 +289,19 @@ const paymentValidator = () => {
     cvvNum.style.borderColor = "white";
     cvvError.style.display = "none";
   } else {
-    cvvNum.style.borderColor = "red";
-    cvvError.innerText = `   Please enter a valid CVV!`;
-    cvvError.style.display = "";
-    cvvBool = false;
+    if(cvvNum.value.length === 0){
+      cvvNum.style.borderColor = "red";
+      cvvError.innerText = `   *Please enter a  CVV number!`;
+      cvvError.style.display = "";
+      cvvBool = false;
+      console.log('katholou');
+    }else if(cvvNum.value.length > 3 || cvvNum.value.length < 3){
+      cvvNum.style.borderColor = "red";
+      cvvError.innerText = `   *Please enter a 3 digit CVV number!`;
+      cvvError.style.display = "";
+      cvvBool = false;
+      console.log('>>');
+    }
   }
 
   //If all the fields have correct values we send a true value to the paymentvalidator
@@ -294,7 +321,13 @@ function errorMessage() {
   return error;
 }
 
-/* Submit listener on the form element */
+//Event Listeners to dynamically change the error messages
+  name.addEventListener("input",nameValidator);
+  email.addEventListener("input",emailValidator);
+  activity.addEventListener("change",activityValidator);
+  cc.addEventListener("input",paymentValidator);
+
+/* Input listener on the form element */
 form.addEventListener("submit", (e) => {
   if (!nameValidator()) {
     e.preventDefault();
@@ -311,3 +344,4 @@ form.addEventListener("submit", (e) => {
     }
   }
 });
+
